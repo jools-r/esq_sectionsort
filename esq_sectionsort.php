@@ -322,7 +322,7 @@ $(function () {
                         sectionsort[tr.attr("id").replace("txp_section_", "")] = tr.index();
                     });
                 var set_message = function (message, type) {
-                    $("#messagepane").html('<span id="message" class="' + type + '">' + message + ' <a href="#close" class="close">&times;</a></span>');
+                    $("#messagepane").html('<span id="message" class="messageflash ' + type + '" role="alert" aria-live="assertive">' + message + ' <a class="close" role="button" title="Close" href="#close"><span class="ui-icon ui-icon-close">Close</span></a></span>');
                     $("#message").fadeOut("fast").fadeIn("fast");
                 };
                 $.ajax("index.php?event=plugin_prefs.esq_sectionsort&step=put&type=section", {
@@ -425,7 +425,7 @@ $(function () {
                             categorysort[el.data("category_id")] = el.closest(".category-tree").find(".categorysort").index(el);
                         });
                         var set_message = function (message, type) {
-                            $("#messagepane").html('<span id="message" class="' + type + '">' + message + ' <a href="#close" class="close">&times;</a></span>');
+                            $("#messagepane").html('<span id="message" class="messageflash ' + type + '" role="alert" aria-live="assertive">' + message + ' <a class="close" role="button" title="Close" href="#close"><span class="ui-icon ui-icon-close">Close</span></a></span>');
                             $("#message").fadeOut("fast").fadeIn("fast");
                         };
                         $.ajax("index.php?event=plugin_prefs.esq_sectionsort&step=put&type=category", {

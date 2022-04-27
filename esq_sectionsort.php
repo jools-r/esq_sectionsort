@@ -275,7 +275,7 @@ echo 'var sectionsort = [];'."\n";
 foreach(safe_rows('name, sectionsort', 'txp_section', '1=1') as $row) {
 $section = $row['name'];
 $sort = $row['sectionsort'];
-if (!strlen($sort)) {
+if (!isset($sort)) {
 $sort = 0;
 }
 echo 'sectionsort[\'txp_section_'.addslashes($section).'\'] = \''.addslashes($sort).'\';'."\n";
@@ -351,7 +351,7 @@ echo 'var categorysort = [];'."\n";
 foreach(safe_rows('id, categorysort', 'txp_category', '1=1') as $row) {
 $category_id = $row['id'];
 $sort = $row['categorysort'];
-if (!strlen($sort)) {
+if (!isset($sort)) {
 $sort = 0;
 }
 echo 'categorysort['.addslashes($category_id).'] = '.addslashes($sort).';'."\n";

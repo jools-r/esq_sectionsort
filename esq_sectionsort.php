@@ -71,7 +71,6 @@ if (!defined('txpinterface'))
         @include_once('zem_tpl.php');
 
 # --- BEGIN PLUGIN CODE ---
-//<?php
 if(@txpinterface == 'admin') {
 register_callback('esq_sectionsort_section_js', 'section_ui', 'multi_edit_options');
 register_callback('esq_sectionsort_category_js', 'category_ui', 'multi_edit_options');
@@ -104,12 +103,16 @@ echo <<<EOB
 td.categories p:first-child {
 border-top: 0;
 }
-#category_container .category-tree > .categorysort:first-child,
-#page-category .category-tree > .categorysort:first-child {
+#category_article_form > .categorysort:first-child,
+#category_image_form > .categorysort:first-child,
+#category_file_form > .categorysort:first-child,
+#category_link_form > .categorysort:first-child {
 border-top: 1px solid #ddd;
 }
-#category_container .category-tree p .handle,
-#page-category .category-tree p .handle {
+#category_article_form p .handle,
+#category_image_form p .handle,
+#category_file_form p .handle,
+#category_link_form p .handle {
 cursor: move;
 }
 </style>
@@ -137,7 +140,7 @@ $step_result = $step();
 pagetop('esq_sectionsort Options', $step_result);
 break;
 }
-echo '<div style="text-align: center;"><div style="text-align: left; margin: 0 auto; width: 900px;">';
+echo '<div style="text-align: center;"><div style="text-align: left; margin: 0 auto; /*width: 900px;*/">';
 if (esq_sectionsort_checkDB() == true) {
 echo form(
 '<input type="hidden" name="event" value="plugin_prefs.esq_sectionsort" />'.
@@ -268,23 +271,23 @@ $success = false;
 }
 echo json_encode(array('success' => $success));
 } else {
-$sectionsort = array();
+echo 'var sectionsort = [];'."\n";
 foreach(safe_rows('name, sectionsort', 'txp_section', '1=1') as $row) {
 $section = $row['name'];
 $sort = $row['sectionsort'];
 if (!strlen($sort)) {
 $sort = 0;
 }
-$sectionsort['txp_section_' . $section] = ctype_digit($sort) ? (int)$sort : $sort;
+echo 'sectionsort[\'txp_section_'.addslashes($section).'\'] = \''.addslashes($sort).'\';'."\n";
 }
-echo 'var sectionsort = ', json_encode($sectionsort), ';'."\n";
 echo <<<EOB
 $(function() {
+$('.txp-list th').removeClass('asc').removeClass('desc');
 $('#section_container thead tr').prepend('<th style="width: 30px;">Sort</th>').find('th').each(function() {
 var th = $(this);
 th.html(th.text());
 });
-$('#section_container table').css('table-layout', 'fixed').find('tbody tr').prepend('<td></td>').not('#txp_section_default').appendTo('#section_container tbody').sortElements(function(a, b) {
+$('#section_container table').find('tbody tr').prepend('<td></td>').not('#txp_section_default').appendTo('#section_container tbody').sortElements(function(a, b) {
 var a_sort = sectionsort[$(a).attr('id')];
 var b_sort = sectionsort[$(b).attr('id')];
 if (a_sort == b_sort) {
@@ -344,22 +347,19 @@ $success = false;
 }
 echo json_encode(array('success' => $success));
 } else {
-$categorysort = array();
+echo 'var categorysort = [];'."\n";
 foreach(safe_rows('id, categorysort', 'txp_category', '1=1') as $row) {
 $category_id = $row['id'];
 $sort = $row['categorysort'];
 if (!strlen($sort)) {
 $sort = 0;
 }
-$categorysort[$category_id] = ctype_digit($sort) ? (int)$sort : $sort;
+echo 'categorysort['.addslashes($category_id).'] = '.addslashes($sort).';'."\n";
 }
-echo 'var categorysort = ', json_encode($categorysort), ';'."\n";
 echo <<<EOB
 $(function() {
 var sort_groups = [];
-// MOD 
-// $('#category_container .category-tree').each(function() {
-$('#page-category .category-tree').each(function() {
+$('#category_article_form,#category_image_form,#category_file_form,#category_link_form').each(function() {
 $(this).find('p').wrapAll('<div class="categorysort"/>').each(function() {
 var current = $(this);
 var next = current.next('p');
@@ -416,13 +416,13 @@ data: categorysort,
 dataType: 'json',
 success: function(response) {
 if (response.success) {
-set_message('Section order saved OK', 'success')
+set_message('Category order saved OK', 'success')
 } else {
 this.error();
 }
 },
 error: function() {
-set_message('Section order save failed', 'error');
+set_message('Category order save failed', 'error');
 }
 }
 );
@@ -451,18 +451,18 @@ echo <<<EOB
 * --------------
 * @param Function comparator:
 *   Exactly the same behaviour as [1,2,3].sort(comparator)
-*   
+*
 * @param Function getSortable
 *   A function that should return the element that is
 *   to be sorted. The comparator will run on the
 *   current collection, but you may want the actual
 *   resulting sort to occur on a parent or another
 *   associated element.
-*   
+*
 *   E.g. $('td').sortElements(comparator, function(){
-*      return this.parentNode; 
+*      return this.parentNode;
 *   })
-*   
+*
 *   The <td>'s parent (<tr>) will be sorted instead
 *   of the <td> itself.
 */

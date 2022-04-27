@@ -17,9 +17,9 @@ $plugin['name'] = 'esq_sectionsort';
 // 1 = Plugin help is in raw HTML.  Not recommended.
 # $plugin['allow_html_help'] = 1;
 
-$plugin['version'] = '2.04';
-$plugin['author'] = '';
-$plugin['author_uri'] = 'http://textpattern.org';
+$plugin['version'] = '2.0.5';
+$plugin['author'] = 'Radneck + TXP forum';
+$plugin['author_uri'] = 'https://github.com/jools-r/esq_sectionsort';
 $plugin['description'] = 'Custom sorting of sections and categories';
 
 // Plugin load order:
